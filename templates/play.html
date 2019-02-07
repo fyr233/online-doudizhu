@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <title>斗地主</title>
+
+
+    </head>
+    <body>
+        房间名：{{roomname}} <br/>
+        房间id：{{roomid}} <br/>
+        用户名：{{playername}} <br/>
+        用户id：{{playerid}} <br/>
+        <div id="result" style="color:red">{{result}}</div>
+        <button class="btn btn-lg btn-primary btn-block" id="ready" >准备</button>
+        
+       
+
+        <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+        <script>
+        var getJSON = function(url) {
+          return new Promise(function(resolve, reject) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('post', url, );//true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            
+            xhr.responseType = 'json';
+            xhr.onload = function() {
+              var status = xhr.status;
+              if (status == 200) {
+                resolve(xhr.response);
+              } else {
+                reject(status);
+              }
+            };
+            var params = "roomid="+{{roomid}}+"&playerid="+{{playerid}};
+            xhr.send(params);
+          });
+        };
+        $("#ready").click(function () {
+            getJSON('/ready').then(function(data) {
+                alert('Your Json result is:  ' + data); //you can comment this, i used it to debug
+
+
+            }, function(status) { //error detection....
+              alert('Something went wrong.');
+            });
+        });
+
+      </script>
+
+    </body>
+</html>

@@ -40,6 +40,8 @@ class Room(object):
         return len(self.players) >= 3
 
     def IsReady(self):
+        if len(self.players)<3:
+            return False
         isready = True
         for each in self.players:
             isready = isready and (each.state=='ready')
@@ -206,24 +208,24 @@ def FindRoombyName(name):
     return -1
 
 '''
-url:/
+url:/,/login
 method:get
 return:index.html
 '''
 
 @app.route('/')
+@app.route('/login')
 def indexpage():
     return render_template('index.html')
 
 '''
-url:/login
+url:/play
 method:post
 data:{'roomname':房间名,'playername':用户名}
-return:{'result':'登录成功','roomid':房间id,'playerid':用户id}
-    或:{'error':'房间已满'}
+return:play.html
 '''
 
-@app.route('/login', methods=['POST'])
+@app.route('/play', methods=['POST'])
 def login():
     roomname = request.form['roomname']
     playername = request.form['playername']
@@ -232,73 +234,92 @@ def login():
         newroomid = CreateRoom(roomname)
         newplayer = Player(playername)
         newplayerid = room_list[newroomid].AddPlayer(newplayer)
-        return jsonify({'result':'登录成功',
-                        'roomid':str(newroomid),
-                        'playerid':str(newplayerid)})
+        return render_template('play.html', 
+                                roomname=roomname, 
+                                roomid=newroomid, 
+                                playername=playername, 
+                                playerid=newplayerid, 
+                                result='登录成功')
     else:
         playerid = room_list[roomid].FindPlayerbyName(playername)
         if playerid < 0:
             if room_list[roomid].IsFull():
-                return jsonify({'error':'房间已满'})
+                return render_template('play.html', 
+                                roomname=None, 
+                                roomid=None,  
+                                playername=None, 
+                                playerid=None, 
+                                result='此房已满')
             else:
                 newplayer = Player(playername)
                 newplayerid = room_list[roomid].AddPlayer(newplayer)
                 room_list[roomid].AddPlayer(newplayer)
-                return jsonify({'result':'登录成功',
-                                'roomid':str(roomid),
-                                'playerid':str(newplayerid)})
+                return render_template('play.html', 
+                                roomname=roomname, 
+                                roomid=roomid, 
+                                playername=playername, 
+                                playerid=newplayerid, 
+                                result='登录成功')
         else:
-            return jsonify({'result':'您已存在',
-                            'roomid':str(roomid),
-                            'playerid':str(playerid)})
+            return render_template('play.html', 
+                                roomname=roomname, 
+                                roomid=roomid, 
+                                playername=playername, 
+                                playerid=playerid, 
+                                result='您已存在')
 
 '''
 url:/ready
 method:post
 data:{'roomid':房间名,'playerid':用户名}
-return:没有
+return:json
 '''
 
 @app.route('/ready', methods=['POST'])
 def getready():
-    roomid = request.form['roomid']
-    playerid = request.form['playerid']
-    room_list[roomid].FindPlayerbyId(playerid).state = 'ready'
+    roomid = int(request.form['roomid'])
+    playerid = int(request.form['playerid'])
+    room_list[roomid].players[playerid].state = 'ready'
 
     if room_list[roomid].IsReady():
         room_list[roomid].DistributeCards()
+    return jsonify({'result':'OK'})
 
 '''
 url:/grab
 method:post
 data:{'roomid':房间名,'playerid':用户名,'choice':'1'}//'1'抢地主，'0'不抢
-return:没有
+return:json
 '''
 
 @app.route('/grab', methods=['POST'])
 def grab():
-    roomid = request.form['roomid']
-    playerid = request.form['playerid']
+    roomid = int(request.form['roomid'])
+    playerid = int(request.form['playerid'])
     choice = request.form['choice']
     if room_list[roomid].players[playerid].state=='grabbing on turn':
         room_list[roomid].GrabDiZhu(playerid, choice)
+    return jsonify({'result':'OK'})
 
 '''
 url:/out
 method:post
 data:{'roomid':房间名,'playerid':用户名,'cards':出的牌}//cards是形如[14, 140, 27, 26,]的数组
-return:没有或{'error':'牌型不符合要求'}
+return:json
 '''
 
 @app.route('/out', methods=['POST'])
 def outcard():
-    roomid = request.form['roomid']
-    playerid = request.form['playerid']
+    roomid = int(request.form['roomid'])
+    playerid = int(request.form['playerid'])
     cards = Card.card_ints_from_string(request.form['cards'])
     b, t = check_card_type(cards)
     if b :
         if room_list[roomid].players[playerid].state=='playing':
             room_list[roomid].Play(playerid, cards)
+            return jsonify({'result':'OK'})
+        else:
+            return jsonify({'error':'未轮到您出牌'})
     else:
         return jsonify({'error':'牌型不符合要求'})
 
@@ -306,31 +327,33 @@ def outcard():
 url:/pass
 method:post
 data:{'roomid':房间名,'playerid':用户名}
-return:没有
+return:json
 '''
 
 @app.route('/pass', methods=['POST'])
 def skip():
-    roomid = request.form['roomid']
-    playerid = request.form['playerid']
+    roomid = int(request.form['roomid'])
+    playerid = int(request.form['playerid'])
     if room_list[roomid].players[playerid].state=='playing':
         room_list[roomid].Pass(playerid)
+    return jsonify({'result':'OK'})
 
 '''
 url:/quit
 method:post
 data:{'roomid':房间名,'playerid':用户名}
-return:没有
+return:json
 '''
 
 @app.route('/quit', methods=['POST'])
 def over():
-    roomid = request.form['roomid']
-    playerid = request.form['playerid']
-    room_list[roomid].FindPlayerbyId(playerid).state = 'over'
+    roomid = int(request.form['roomid'])
+    playerid = int(request.form['playerid'])
+    room_list[roomid].players[playerid].state = 'over'
 
     if room_list[roomid].IsOver():
         DestroyRoom(roomid)
+    return jsonify({'result':'OK'})
 
 '''
 url:/refresh
@@ -346,9 +369,10 @@ return:{'roomname':房间名,
 
 @app.route('/refresh', methods=['POST'])
 def refresh():
-    roomid = request.form['roomid']
-    playerid = request.form['playerid']
+    roomid = int(request.form['roomid'])
+    playerid = int(request.form['playerid'])
     return jsonify({'roomname':room_list[roomid].name,
+                    'publicmessage':room_list[roomid].publicmessage,
                     'playername':room_list[roomid].players[playerid].name,
                     'playerstate':room_list[roomid].players[playerid].state,
                     'playerscore':str(room_list[roomid].players[playerid].score),

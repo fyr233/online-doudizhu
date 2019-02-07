@@ -1,16 +1,32 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta content="text/html; charset=utf-8" http-equiv="content-type">
-        <title>斗地主</title>
+<html lang="en">
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type">
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <title>斗地主</title>
 
 
     </head>
     <body>
-            <form action="/login" method="post">
-            房间名：<input type="text" name="roomname"> <br/>
-            用户名：<input type="text" name="playername" > <br/>
-            <input type="submit" value="加入游戏">
-            </form>
+        <form action="/play" method="POST">
+        房间名：<input type="text" name="roomname" id="roomname"> <br/>
+        用户名：<input type="text" name="playername" id="playername"> <br/>
+        <button type="submit" class="btn btn-lg btn-primary btn-block" id="join" >加入游戏</button>
+        </form>
+
+       <div id="result" style="color:red"></div>
+
+        <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+        <script>
+
+      </script>
+
     </body>
 </html>
