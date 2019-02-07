@@ -31,8 +31,8 @@ class Room(object):
         return len(self.players) - 1
 
     def FindPlayerbyName(self, playername):
-        for i in range(len(players)):
-            if players[i].name == playeranme:
+        for i in range(len(self.players)):
+            if self.players[i].name == playername:
                 return i
         return -1
     
@@ -91,7 +91,7 @@ class Room(object):
                 self.players[(self.firstid+2)%3].card_left.extend(self.cards_pool[3])
             elif self.grabchoice==['0', '0', '0']:
                 self.publicmessage = '重新开始'
-                DistributeCards()
+                self.DistributeCards()
                 self.grabchoice=[]
                 self.players[self.firstid].state = 'grabbing on turn'
                 self.players[(self.firstid+1)%3].state = 'waiting'
@@ -126,12 +126,12 @@ class Room(object):
                             self.players[playerid].card_left.pop(i)
                             break
                 if self.players[playerid].card_left==[]:
-                    Win(playerid)
+                    self.Win(playerid)
                 else:
                     self.players[playerid].state = 'waiting'
                     self.players[(playerid+1)%3].state = 'playing'
             else:
-                b, t = cards_greater(cards, outcard_list[-1])
+                b, t = cards_greater(cards, self.outcard_list[-1])
                 if b:
                     self.outcard_log.append([playerid, cards])
                     for each in cards:
@@ -140,7 +140,7 @@ class Room(object):
                                 self.players[playerid].card_left.pop(i)
                                 break
                     if self.players[playerid].card_left==[]:
-                        Win(playerid)
+                        self.Win(playerid)
                     else:
                         self.players[playerid].state = 'waiting'
                         self.players[(playerid+1)%3].state = 'playing'
@@ -154,7 +154,7 @@ class Room(object):
                         self.players[playerid].card_left.pop(i)
                         break
             if self.players[playerid].card_left==[]:
-                Win(playerid)
+                self.Win(playerid)
             else:
                 self.players[playerid].state = 'waiting'
                 self.players[(playerid+1)%3].state = 'playing'
@@ -244,12 +244,12 @@ def login():
                 newplayer = Player(playername)
                 room_list[roomid].AddPlayer(newplayer)
                 return jsonify({'result':'登录成功',
-                                'roomid':str(newroomid),
-                                'playerid':str(newplayerid)})
+                                'roomid':str(roomid),
+                                'playerid':str(playerid)})
         else:
             return jsonify({'result':'您已存在',
-                            'roomid':str(newroomid),
-                            'playerid':str(newplayerid)})
+                            'roomid':str(roomid),
+                            'playerid':str(playerid)})
 
 '''
 url:/ready
@@ -329,7 +329,7 @@ def over():
     room_list[roomid].FindPlayerbyId(playerid).state = 'over'
 
     if room_list[roomid].IsOver():
-        DestroyRoom(i)
+        DestroyRoom(roomid)
 
 '''
 url:/refresh
