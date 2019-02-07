@@ -242,10 +242,11 @@ def login():
                 return jsonify({'error':'房间已满'})
             else:
                 newplayer = Player(playername)
+                newplayerid = room_list[roomid].AddPlayer(newplayer)
                 room_list[roomid].AddPlayer(newplayer)
                 return jsonify({'result':'登录成功',
                                 'roomid':str(roomid),
-                                'playerid':str(playerid)})
+                                'playerid':str(newplayerid)})
         else:
             return jsonify({'result':'您已存在',
                             'roomid':str(roomid),
