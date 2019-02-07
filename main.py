@@ -205,10 +205,23 @@ def FindRoombyName(name):
             return i
     return -1
 
+'''
+url:/
+method:get
+return:index.html
+'''
 
 @app.route('/')
 def indexpage():
     return render_template('index.html')
+
+'''
+url:/login
+method:post
+data:{'roomname':房间名,'playername':用户名}
+return:{'result':'登录成功','roomid':房间id,'playerid':用户id}
+    或:{'error':'房间已满'}
+'''
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -238,6 +251,13 @@ def login():
                             'roomid':str(newroomid),
                             'playerid':str(newplayerid)})
 
+'''
+url:/ready
+method:post
+data:{'roomid':房间名,'playerid':用户名}
+return:没有
+'''
+
 @app.route('/ready', methods=['POST'])
 def getready():
     roomid = request.form['roomid']
@@ -247,6 +267,13 @@ def getready():
     if room_list[roomid].IsReady():
         room_list[roomid].DistributeCards()
 
+'''
+url:/grab
+method:post
+data:{'roomid':房间名,'playerid':用户名,'choice':'1'}//'1'抢地主，'0'不抢
+return:没有
+'''
+
 @app.route('/grab', methods=['POST'])
 def grab():
     roomid = request.form['roomid']
@@ -254,6 +281,13 @@ def grab():
     choice = request.form['choice']
     if room_list[roomid].players[playerid].state=='grabbing on turn':
         room_list[roomid].GrabDiZhu(playerid, choice)
+
+'''
+url:/out
+method:post
+data:{'roomid':房间名,'playerid':用户名,'cards':出的牌}//cards是形如[14, 140, 27, 26,]的数组
+return:没有或{'error':'牌型不符合要求'}
+'''
 
 @app.route('/out', methods=['POST'])
 def outcard():
@@ -267,12 +301,26 @@ def outcard():
     else:
         return jsonify({'error':'牌型不符合要求'})
 
+'''
+url:/pass
+method:post
+data:{'roomid':房间名,'playerid':用户名}
+return:没有
+'''
+
 @app.route('/pass', methods=['POST'])
 def skip():
     roomid = request.form['roomid']
     playerid = request.form['playerid']
     if room_list[roomid].players[playerid].state=='playing':
         room_list[roomid].Pass(playerid)
+
+'''
+url:/quit
+method:post
+data:{'roomid':房间名,'playerid':用户名}
+return:没有
+'''
 
 @app.route('/quit', methods=['POST'])
 def over():
@@ -282,6 +330,18 @@ def over():
 
     if room_list[roomid].IsOver():
         DestroyRoom(i)
+
+'''
+url:/refresh
+method:post
+data:{'roomid':房间名,'playerid':用户名}
+return:{'roomname':房间名,
+        'playername':用户名,
+        'playerstate':用户状态,//'notready','ready','grabbing on turn','waiting','playing'
+        'playerscore':用户分数,
+        'playerrole':用户角色,//'nongmin','dizhu'
+        'playercards':用户剩下的牌}//形如[14, 140, 27, 26,]的数组
+'''
 
 @app.route('/refresh', methods=['POST'])
 def refresh():
@@ -297,4 +357,4 @@ def refresh():
 room_list = []
 
 if __name__ == '__main__':
-    app.run(debug = True, host='0.0.0.0')
+    app.run(debug = True, host='0.0.0.0', port=2222)
