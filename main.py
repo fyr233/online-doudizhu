@@ -117,9 +117,9 @@ class Room(object):
                 self.players[(self.firstid+2)%3].state = 'playing'
                 self.players[(self.firstid+2)%3].card_left.extend(self.cards_pool[3])
     def Play(self, playerid, cards):
-        if len(outcard_log)>0:
-            if outcard_log[-1][0]==playerid:
-                outcard_log.append([playerid, cards])
+        if len(self.outcard_log)>0:
+            if self.outcard_log[-1][0]==playerid:
+                self.outcard_log.append([playerid, cards])
                 for each in cards:
                     for i in range(len(self.players[playerid].card_left)):
                         if self.players[playerid].card_left[i]==each:
@@ -133,7 +133,7 @@ class Room(object):
             else:
                 b, t = cards_greater(cards, outcard_list[-1])
                 if b:
-                    outcard_list.append(cards)
+                    self.outcard_log.append([playerid, cards])
                     for each in cards:
                         for i in range(len(self.players[playerid].card_left)):
                             if self.players[playerid].card_left[i]==each:
@@ -147,7 +147,7 @@ class Room(object):
                 else:
                     self.publicmessage = self.players[(self.firstid+2)%3].name+'，你出的牌有点小'
         else:
-            outcard_log.append([playerid, cards])
+            self.outcard_log.append([playerid, cards])
             for each in cards:
                 for i in range(len(self.players[playerid].card_left)):
                     if self.players[playerid].card_left[i]==each:
