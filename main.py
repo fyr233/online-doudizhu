@@ -283,6 +283,17 @@ def over():
     if room_list[roomid].IsOver():
         DestroyRoom(i)
 
+@app.route('/refresh', methods=['POST'])
+def refresh():
+    roomid = request.form['roomid']
+    playerid = request.form['playerid']
+    return jsonify({'roomname':room_list[roomid].name,
+                    'playername':room_list[roomid].players[playerid].name,
+                    'playerstate':room_list[roomid].players[playerid].state,
+                    'playerscore':str(room_list[roomid].players[playerid].score),
+                    'playerrole':room_list[roomid].players[playerid].role,
+                    'playercards':str(room_list[roomid].players[playerid].card_left)})
+
 room_list = []
 
 if __name__ == '__main__':
