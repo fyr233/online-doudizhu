@@ -21,7 +21,7 @@ class Room(object):
         self.cards_pool = doudizhu.new_game()
         self.state = 'waiting'#call, playing
         self.grabchoice = []
-        self.outcard_list=[]
+        self.outcard_log=[]
         self.publicmessage = ''
         self.firstid = randint(0,2)
     
@@ -117,10 +117,9 @@ class Room(object):
                 self.players[(self.firstid+2)%3].state = 'playing'
                 self.players[(self.firstid+2)%3].card_left.extend(self.cards_pool[3])
     def Play(self, playerid, cards):
-        if len(outcard_list)>0:
-            b, t = cards_greater(cards, outcard_list[-1])
-            if b:
-                outcard_list.append(cards)
+        if len(outcard_log)>0:
+            if outcard_log[-1][0]==playerid:
+                outcard_log.append([playerid, cards])
                 for each in cards:
                     for i in range(len(self.players[playerid].card_left)):
                         if self.players[playerid].card_left[i]==each:
@@ -132,9 +131,23 @@ class Room(object):
                     self.players[playerid].state = 'waiting'
                     self.players[(playerid+1)%3].state = 'playing'
             else:
-                self.publicmessage = self.players[(self.firstid+2)%3].name+'，你出的牌有点小'
+                b, t = cards_greater(cards, outcard_list[-1])
+                if b:
+                    outcard_list.append(cards)
+                    for each in cards:
+                        for i in range(len(self.players[playerid].card_left)):
+                            if self.players[playerid].card_left[i]==each:
+                                self.players[playerid].card_left.pop(i)
+                                break
+                    if self.players[playerid].card_left==[]:
+                        Win(playerid)
+                    else:
+                        self.players[playerid].state = 'waiting'
+                        self.players[(playerid+1)%3].state = 'playing'
+                else:
+                    self.publicmessage = self.players[(self.firstid+2)%3].name+'，你出的牌有点小'
         else:
-            outcard_list.append(cards)
+            outcard_log.append([playerid, cards])
             for each in cards:
                 for i in range(len(self.players[playerid].card_left)):
                     if self.players[playerid].card_left[i]==each:
