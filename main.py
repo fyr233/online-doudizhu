@@ -39,7 +39,8 @@ class Room(object):
     def IsFull(self):
         return len(self.players) >= 3
 
-    def IsReady(self):
+    def IsReady(self, playerid):
+        self.publicmessage = self.players[playerid].name+'准备好了'
         if len(self.players)<3:
             return False
         isready = True
@@ -162,6 +163,7 @@ class Room(object):
                 self.players[(playerid+1)%3].state = 'playing'
     
     def Pass(self, playerid):
+        self.publicmessage = self.players[playerid].name+'不出'
         self.players[playerid].state = 'waiting'
         self.players[(playerid+1)%3].state = 'playing'
 
@@ -177,7 +179,8 @@ class Room(object):
         else:
             self.players[(playerid+2)%3].state = 'loss'
     
-    def IsOver(self):
+    def IsOver(self, playerid):
+        self.publicmessage = self.players[playerid].name+'退出了游戏'
         isover = True
         for each in self.players:
             isover = isover and (each.state=='over')
@@ -245,15 +248,14 @@ def login():
         if playerid < 0:
             if room_list[roomid].IsFull():
                 return render_template('play.html', 
-                                roomname=None, 
-                                roomid=None,  
-                                playername=None, 
-                                playerid=None, 
+                                roomname='-1', 
+                                roomid='-1',  
+                                playername='-1', 
+                                playerid='-1', 
                                 result='此房已满')
             else:
                 newplayer = Player(playername)
                 newplayerid = room_list[roomid].AddPlayer(newplayer)
-                room_list[roomid].AddPlayer(newplayer)
                 return render_template('play.html', 
                                 roomname=roomname, 
                                 roomid=roomid, 
@@ -281,7 +283,7 @@ def getready():
     playerid = int(request.form['playerid'])
     room_list[roomid].players[playerid].state = 'ready'
 
-    if room_list[roomid].IsReady():
+    if room_list[roomid].IsReady(playerid):
         room_list[roomid].DistributeCards()
     return jsonify({'result':'OK'})
 
@@ -351,7 +353,7 @@ def over():
     playerid = int(request.form['playerid'])
     room_list[roomid].players[playerid].state = 'over'
 
-    if room_list[roomid].IsOver():
+    if room_list[roomid].IsOver(playerid):
         DestroyRoom(roomid)
     return jsonify({'result':'OK'})
 
