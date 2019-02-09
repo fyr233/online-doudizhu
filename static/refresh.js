@@ -82,13 +82,16 @@ $("#notgrab").click(function () {
 });
 
 $("#out").click(function () {
-    let params = 'roomid='+roomid+'&playerid='+playerid+'&cards=1';//未完成
-    getJSON('/out', params).then(function(data) {
-        //alert('Your Json result is:  ' + data); //you can comment this, i used it to debug
-        
-    }, function(status) { //error detection....
-      alert('Something went wrong.');
-    });
+    if ($("#outcards").val()!='')
+    {
+      let params = 'roomid='+roomid+'&playerid='+playerid+'&cards='+$("#outcards").val();//未完成
+      getJSON('/out', params).then(function(data) {
+          //alert('Your Json result is:  ' + data); //you can comment this, i used it to debug
+          
+      }, function(status) { //error detection....
+        alert('Something went wrong.');
+      });
+    }
 });
 
 $("#pass").click(function () {
