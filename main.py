@@ -59,6 +59,10 @@ class Room(object):
         self.players[(self.firstid+2)%3].state = 'waiting'
 
     def GrabDiZhu(self, playerid, choice):
+        if choice=='1':
+            self.publicmessage = self.players[playerid].name+'抢了'
+        else:
+            self.publicmessage = self.players[playerid].name+'8抢'
         if len(self.grabchoice)==0:
             self.grabchoice.append(choice)
             self.players[self.firstid].state = 'waiting'
@@ -120,6 +124,7 @@ class Room(object):
                 self.players[(self.firstid+2)%3].state = 'playing'
                 self.players[(self.firstid+2)%3].card_left.extend(self.cards_pool[3])
     def Play(self, playerid, cards):
+        self.publicmessage = self.players[playerid].name+'出了'
         if len(self.outcard_log)>0:
             if self.outcard_log[-1][0]==playerid:
                 self.outcard_log.append([playerid, cards])
@@ -134,7 +139,7 @@ class Room(object):
                     self.players[playerid].state = 'waiting'
                     self.players[(playerid+1)%3].state = 'playing'
             else:
-                b, t = cards_greater(cards, self.outcard_list[-1])
+                b, t = cards_greater(cards, self.outcard_log[-1][1])
                 if b:
                     self.outcard_log.append([playerid, cards])
                     for each in cards:
@@ -163,7 +168,7 @@ class Room(object):
                 self.players[(playerid+1)%3].state = 'playing'
     
     def Pass(self, playerid):
-        self.publicmessage = self.players[playerid].name+'不出'
+        self.publicmessage = self.players[playerid].name+'8出'
         self.players[playerid].state = 'waiting'
         self.players[(playerid+1)%3].state = 'playing'
 
@@ -314,7 +319,8 @@ return:json
 def outcard():
     roomid = int(request.form['roomid'])
     playerid = int(request.form['playerid'])
-    cards = Card.card_ints_from_string(request.form['cards'])
+    cards = request.form['cards']
+    cards = list(int(i) for i in cards[1:-1].split(','))
     b, t = check_card_type(cards)
     if b :
         if room_list[roomid].players[playerid].state=='playing':
@@ -376,6 +382,7 @@ def refresh():
     lastcards = 'None'
     if len(room_list[roomid].outcard_log)>0:
         lastcards = str(room_list[roomid].outcard_log[-1][1])
+        print(room_list[roomid].outcard_log)
     return jsonify({'roomname':room_list[roomid].name,
                     'publicmessage':room_list[roomid].publicmessage,
                     'playername':room_list[roomid].players[playerid].name,
