@@ -373,15 +373,19 @@ return:{'roomname':房间名,
 def refresh():
     roomid = int(request.form['roomid'])
     playerid = int(request.form['playerid'])
+    lastcards = 'None'
+    if len(room_list[roomid].outcard_log)>0:
+        lastcards = str(room_list[roomid].outcard_log[-1][1])
     return jsonify({'roomname':room_list[roomid].name,
                     'publicmessage':room_list[roomid].publicmessage,
                     'playername':room_list[roomid].players[playerid].name,
                     'playerstate':room_list[roomid].players[playerid].state,
                     'playerscore':str(room_list[roomid].players[playerid].score),
                     'playerrole':room_list[roomid].players[playerid].role,
-                    'playercards':str(room_list[roomid].players[playerid].card_left)})
+                    'playercards':str(room_list[roomid].players[playerid].card_left),
+                    'lastcards':lastcards})
 
 room_list = []
 
 if __name__ == '__main__':
-    app.run(debug = True, host='0.0.0.0', port=2222)
+    app.run(host='0.0.0.0', port=5000)

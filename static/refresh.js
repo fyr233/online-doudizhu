@@ -1,3 +1,10 @@
+var publicmessage = '';
+var playerstate = '';
+var playerscore = '';
+var playerrole = '';
+var playercards = '';
+var lastcards = '';
+
 var getJSON = function(url, params) {
     return new Promise(function(resolve, reject) {
       var xhr = new XMLHttpRequest();
@@ -20,11 +27,19 @@ function refresh(){
     let params = 'roomid='+roomid+'&playerid='+playerid;
     getJSON('/refresh', params).then(function(data) {
         //alert('Your Json result is:  ' + data['roomname']); //you can comment this, i used it to debug
-        $("#publicmessage").text('系统消息：'+data['publicmessage']);
-        $("#playerstate").text('您的状态：'+data['playerstate']);
-        $("#playerscore").text('您的分数：'+data['playerscore']);
-        $("#playerrole").text('您的角色：'+data['playerrole']);
-        $("#playercards").text('您的牌：'+data['playercards']);
+        publicmessage = data['publicmessage'];
+        playerstate = data['playerstate'];
+        playerscore = data['playerscore'];
+        playerrole = data['playerrole'];
+        playercards = data['playercards'];
+        lastcards = data['lastcards'];
+
+        $("#publicmessage").text('系统消息：'+publicmessage);
+        $("#playerstate").text('您的状态：'+playerstate);
+        $("#playerscore").text('您的分数：'+playerscore);
+        $("#playerrole").text('您的角色：'+playerrole);
+        $("#playercards").text('您的牌：'+playercards);
+        $("#lastcards").text('之前的牌：'+lastcards);
 
     }, function(status) { //error detection....
       //alert('Something went wrong.');
