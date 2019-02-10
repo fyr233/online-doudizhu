@@ -379,10 +379,23 @@ return:{'roomname':房间名,
 def refresh():
     roomid = int(request.form['roomid'])
     playerid = int(request.form['playerid'])
-    lastcards = 'None'
+
     if len(room_list[roomid].outcard_log)>0:
         lastcards = str(room_list[roomid].outcard_log[-1][1])
-        print(room_list[roomid].outcard_log)
+    else:
+        lastcards = 'None'
+    
+    if room_list[roomid].IsFull():
+        Lplayername = room_list[roomid].players[(playerid-1)%3].name
+        Lplayercardsamount = len(room_list[roomid].players[(playerid-1)%3].card_left)
+        Rplayername = room_list[roomid].players[(playerid+1)%3].name
+        Rplayercardsamount = len(room_list[roomid].players[(playerid+1)%3].card_left)
+    else:
+        Lplayername = 'None'
+        Lplayercardsamount = 'None'
+        Rplayername = 'None'
+        Rplayercardsamount = 'None'
+    
     return jsonify({'roomname':room_list[roomid].name,
                     'publicmessage':room_list[roomid].publicmessage,
                     'playername':room_list[roomid].players[playerid].name,
@@ -390,7 +403,11 @@ def refresh():
                     'playerscore':str(room_list[roomid].players[playerid].score),
                     'playerrole':room_list[roomid].players[playerid].role,
                     'playercards':str(room_list[roomid].players[playerid].card_left),
-                    'lastcards':lastcards})
+                    'lastcards':lastcards,
+                    'Lplayername':Lplayername,
+                    'Lplayercardsamount':Lplayercardsamount,
+                    'Rplayername':Rplayername,
+                    'Rplayercardsamount':Rplayercardsamount,})
 
 room_list = []
 
