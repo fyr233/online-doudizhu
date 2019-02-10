@@ -4,6 +4,10 @@ var playerscore = '';
 var playerrole = '';
 var playercards = '';
 var lastcards = '';
+var Lplayername = '';
+var Lplayercardsamount = '';
+var Rplayername = '';
+var Rplayercardsamount = '';
 
 var getJSON = function(url, params) {
     return new Promise(function(resolve, reject) {
@@ -33,6 +37,10 @@ function refresh(){
         playerrole = data['playerrole'];
         playercards = data['playercards'];
         lastcards = data['lastcards'];
+        Lplayername = data['Lplayername'];
+        Lplayercardsamount = data['Lplayercardsamount'];
+        Rplayername = data['Rplayername'];
+        Rplayercardsamount = data['Rplayercardsamount'];
 
         $("#publicmessage").text('系统消息：'+publicmessage);
         $("#playerstate").text('您的状态：'+playerstate);
@@ -40,6 +48,10 @@ function refresh(){
         $("#playerrole").text('您的角色：'+playerrole);
         $("#playercards").text('您的牌：'+playercards);
         $("#lastcards").text('之前的牌：'+lastcards);
+        $("#Lplayername").text('上家：'+Lplayername);
+        $("#Lplayercardsamount").text('上家还剩：'+Lplayercardsamount+'张');
+        $("#Rplayername").text('下家：'+Rplayername);
+        $("#Rplayercardsamount").text('下家还剩：'+Rplayercardsamount+'张');
 
     }, function(status) { //error detection....
       //alert('Something went wrong.');
@@ -87,7 +99,7 @@ $("#out").click(function () {
       let params = 'roomid='+roomid+'&playerid='+playerid+'&cards='+$("#outcards").val();//未完成
       getJSON('/out', params).then(function(data) {
           //alert('Your Json result is:  ' + data); //you can comment this, i used it to debug
-          
+
       }, function(status) { //error detection....
         alert('Something went wrong.');
       });
