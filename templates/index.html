@@ -3,19 +3,11 @@
   <head>
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
       <!-- Bootstrap core CSS -->
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-      <link rel="stylesheet" href="../static/stylesheet.css" type="text/css" charset="utf-8">
-      <link rel="stylesheet" href="../static/login.css" type="text/css" charset="utf-8">
+      <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+      <link rel="stylesheet" href="../static/css/stylesheet.css" type="text/css" charset="utf-8">
+      <link rel="stylesheet" href="../static/css/login.css" type="text/css" charset="utf-8">
 
-      <style type="text/css" media="screen">
-          p{
-              -webkit-font-smoothing: none;
-              font-smooth:never;
-          }
-          p.pixl {font:  30px/30px 'pixl', Arial, sans-serif;}
-
-      </style>
-
+    
     <title>斗地主</title>
 
 
@@ -23,22 +15,23 @@
     <body>
         <div class="background">
             <div class="container">
+                <div class="col-12" style="padding: 50px"></div>
                 <form class="form-login" action="/play" method="POST">
-                    <p class="pixl text-center">创建房间</p>
+                    <p class="pixltitle text-center">创建房间</p>
                     <input type="text" class="form-control pixl" name="roomname" id="roomname" placeholder="房间名" required autofocus> <br/>
                     <input type="text" class="form-control" name="playername" id="playername" placeholder="用户名" required> <br/>
                     <button type="submit" class="btn btn-lg btn-primary btn-block" id="join" >
-                        <p class="pixl">加入游戏</p>
+                        <p class="pixltitle">加入游戏</p>
                     </button>
                 </form>
             </div>
         </div>
 
 
-        <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+        <script src="../static/js/jquery.min.js"></script>
 
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+        <script src="../static/js/bootstrap.min.js"></script>
 
     </body>
 </html>

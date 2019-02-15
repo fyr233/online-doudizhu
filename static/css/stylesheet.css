@@ -1,0 +1,33 @@
+
+* { margin: 0; padding: 0; }
+
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+@font-face {
+    font-family: 'pixl';
+    src: url('pixl.eot');
+    src: url('pixl.eot?#iefix') format('embedded-opentype'),
+         url('pixl.woff') format('woff'),
+         url('pixl.ttf') format('truetype'),
+         url('pixl.svg#pixl') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+.background {
+    background-image: url('../img/background.jpg');
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+}
+
+p{
+    -webkit-font-smoothing: none;
+    font-smooth: never;
+}
+p.pixltitle {font:  30px/30px 'pixl', Arial, sans-serif;}
+p.pixl {font:  25px/30px 'pixl', Arial, sans-serif;}

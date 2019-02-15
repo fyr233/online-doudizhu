@@ -81,6 +81,7 @@ class Room(object):
                 self.players[self.firstid].state = 'playing'
                 self.players[(self.firstid+2)%3].state = 'waiting'
                 self.players[self.firstid].card_left.extend(self.cards_pool[3])
+                self.players[self.firstid].card_left.sort()
             elif self.grabchoice in [['1', '1', '0'], ['0', '1', '0']]:
                 self.publicmessage = self.players[(self.firstid+1)%3].name+'成为地主'
                 self.players[(self.firstid+0)%3].role = 'nongmin'
@@ -89,6 +90,7 @@ class Room(object):
                 self.players[(self.firstid+1)%3].state = 'playing'
                 self.players[(self.firstid+2)%3].state = 'waiting'
                 self.players[(self.firstid+1)%3].card_left.extend(self.cards_pool[3])
+                self.players[(self.firstid+1)%3].card_left.sort()
             elif self.grabchoice in [['0', '1', '1'], ['0', '0', '1']]:
                 self.publicmessage = self.players[(self.firstid+2)%3].name+'成为地主'
                 self.players[(self.firstid+0)%3].role = 'nongmin'
@@ -96,6 +98,7 @@ class Room(object):
                 self.players[(self.firstid+2)%3].role = 'dizhu'
                 self.players[(self.firstid+2)%3].state = 'playing'
                 self.players[(self.firstid+2)%3].card_left.extend(self.cards_pool[3])
+                self.players[(self.firstid+2)%3].card_left.sort()
             elif self.grabchoice==['0', '0', '0']:
                 self.publicmessage = '重新开始'
                 self.DistributeCards()
@@ -116,6 +119,7 @@ class Room(object):
                 self.players[self.firstid].state = 'playing'
                 self.players[(self.firstid+2)%3].state = 'waiting'
                 self.players[(self.firstid+0)%3].card_left.extend(self.cards_pool[3])
+                self.players[(self.firstid+0)%3].card_left.sort()
             elif self.grabchoice in [['1', '1', '1', '0'], ['1', '0', '1', '0']]:
                 self.publicmessage = self.players[(self.firstid+2)%3].name+'成为地主'
                 self.players[(self.firstid+0)%3].role = 'nongmin'
@@ -123,6 +127,7 @@ class Room(object):
                 self.players[(self.firstid+2)%3].role = 'dizhu'
                 self.players[(self.firstid+2)%3].state = 'playing'
                 self.players[(self.firstid+2)%3].card_left.extend(self.cards_pool[3])
+                self.players[(self.firstid+2)%3].card_left.sort()
     def Play(self, playerid, cards):
         self.publicmessage = self.players[playerid].name+'出了'
         if len(self.outcard_log)>0:
@@ -383,7 +388,7 @@ def refresh():
     if len(room_list[roomid].outcard_log)>0:
         lastcards = str(room_list[roomid].outcard_log[-1][1])
     else:
-        lastcards = 'None'
+        lastcards = '[]'
     
     if room_list[roomid].IsFull():
         Lplayername = room_list[roomid].players[(playerid-1)%3].name
@@ -392,9 +397,9 @@ def refresh():
         Rplayercardsamount = len(room_list[roomid].players[(playerid+1)%3].card_left)
     else:
         Lplayername = 'None'
-        Lplayercardsamount = 'None'
+        Lplayercardsamount = '0'
         Rplayername = 'None'
-        Rplayercardsamount = 'None'
+        Rplayercardsamount = '0'
     
     return jsonify({'roomname':room_list[roomid].name,
                     'publicmessage':room_list[roomid].publicmessage,
