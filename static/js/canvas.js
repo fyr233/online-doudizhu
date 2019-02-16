@@ -10,11 +10,15 @@ function canvasresize()
     {
         $("#maincanvas").attr("height", winH);
         $("#maincanvas").attr("width", Math.floor(winH*1920/1080));
+        cachecanvas.height = winH;
+        cachecanvas.width = Math.floor(winH*1920/1080);
     }
     else
     {
         $("#maincanvas").attr("width", winW);
         $("#maincanvas").attr("height", Math.floor(winW*1080/1920));
+        cachecanvas.width = winW;
+        cachecanvas.height = Math.floor(winW*1080/1920);
     }
 }
 
@@ -57,7 +61,7 @@ function start()
     //定时器
     setInterval(function()
         {
-            ctx.clearRect(0, 0, maincanvas.width, maincanvas.height);
+            cachectx.clearRect(0, 0, maincanvas.width, maincanvas.height);
             update();
             for (var i=0; i<actorsArr.length; i++)
             {
@@ -77,8 +81,10 @@ function start()
                 }
                 
             }
+            ctx.clearRect(0, 0, maincanvas.width, maincanvas.height);
+            ctx.drawImage(cachecanvas, 0, 0);
         }
-    ,20);
+    ,30);
 }
 
 $('#maincanvas').click(function(e){
@@ -143,7 +149,7 @@ function Pic(imgname, x2, y2, w2, h2, x1, y1, w1, h1)//x1, y1, w1, h1是百分�
 Pic.prototype.render = function()
 {
     //draw
-    ctx.drawImage(R[this.imgname], this.x2, this.y2, this.w2, this.h2, Math.floor(this.x1/100*maincanvas.width), Math.floor(this.y1/100*maincanvas.height), Math.floor(this.w1/100*maincanvas.width), Math.floor(this.h1/100*maincanvas.height));
+    cachectx.drawImage(R[this.imgname], this.x2, this.y2, this.w2, this.h2, Math.floor(this.x1/100*maincanvas.width), Math.floor(this.y1/100*maincanvas.height), Math.floor(this.w1/100*maincanvas.width), Math.floor(this.h1/100*maincanvas.height));
 }
 
 function PicA(imgname, x2, y2, w2, h2, x1, y1, w1, h1)//x1, y1, w1, h1是百分比
@@ -167,7 +173,7 @@ function PicA(imgname, x2, y2, w2, h2, x1, y1, w1, h1)//x1, y1, w1, h1是百分�
 PicA.prototype.render = function()
 {
     //draw
-    ctx.drawImage(R[this.imgname], this.x2, this.y2, this.w2, this.h2, Math.floor(this.x1/100*maincanvas.width), Math.floor(this.y1/100*maincanvas.height), Math.floor(this.w1/100*maincanvas.width), Math.floor(this.h1/100*maincanvas.height));
+    cachectx.drawImage(R[this.imgname], this.x2, this.y2, this.w2, this.h2, Math.floor(this.x1/100*maincanvas.width), Math.floor(this.y1/100*maincanvas.height), Math.floor(this.w1/100*maincanvas.width), Math.floor(this.h1/100*maincanvas.height));
 }
 
 function Text(str, x, y, f)//x,y,f是百分比
@@ -189,9 +195,9 @@ function Text(str, x, y, f)//x,y,f是百分比
 
 Text.prototype.render = function()
 {
-    ctx.font = this.font;
-    ctx.fillStyle = this.fillStyle;
-    ctx.fillText(this.text, this.x/100*maincanvas.width, this.y/100*maincanvas.height);
+    cachectx.font = this.font;
+    cachectx.fillStyle = this.fillStyle;
+    cachectx.fillText(this.text, this.x/100*maincanvas.width, this.y/100*maincanvas.height);
 }
 
 Bg = new Pic('background', 0, 35, 1400, 856-35, 0, 0, 100, 100);

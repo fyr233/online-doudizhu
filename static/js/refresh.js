@@ -11,7 +11,9 @@ var Rplayercardsamount = 1;
 
 //canvas.js中的变量
 var maincanvas = document.getElementById("maincanvas");
+var cachecanvas = document.createElement("canvas");
 var ctx = maincanvas.getContext("2d");
+var cachectx = cachecanvas.getContext("2d");
 var actorsArr = [];
 var actorsArrArr = [];
 var R = {};
