@@ -179,7 +179,7 @@ class Room(object):
         self.players[(playerid+1)%3].state = 'playing'
 
     def Win(self, playerid):
-        self.publicmessage = self.players[(self.firstid+2)%3].name+'赢了'
+        self.publicmessage = self.players[playerid].name+'赢了'
         self.players[playerid].state = 'win'
         if self.players[(playerid+1)%3].role==self.players[playerid].role:
             self.players[(playerid+1)%3].state = 'win'
