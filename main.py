@@ -101,6 +101,7 @@ class Room(object):
                 #self.players[(self.firstid+2)%3].card_left.sort()
             elif self.grabchoice==['0', '0', '0']:
                 self.publicmessage = '重新开始'
+                self.cards_pool = doudizhu.new_game()
                 self.DistributeCards()
                 self.grabchoice=[]
                 self.players[self.firstid].state = 'grabbing on turn'
