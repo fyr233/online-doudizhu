@@ -159,7 +159,7 @@ class Room(object):
                         self.players[playerid].state = 'waiting'
                         self.players[(playerid+1)%3].state = 'playing'
                 else:
-                    self.publicmessage = self.players[(self.firstid+2)%3].name+'，你出的牌有点小'
+                    self.publicmessage = self.players[playerid].name+'，你出的牌有点小'
         else:
             self.outcard_log.append([playerid, cards])
             for each in cards:
@@ -418,4 +418,4 @@ def refresh():
 room_list = []
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=114)
